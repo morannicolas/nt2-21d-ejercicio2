@@ -10,9 +10,17 @@
 
 <body>
     <div class="container-fluid mt-3" id="app">
+
         <input type="text" class="form-control" v-model="criterioDeBusqueda"
-            placeholder="Ingresar un criterio de busqueda...">
+            placeholder="Ingresar nombre o apellido...">
+            <br>
+            <input type="text" class="form-control" v-model="criterioDeBusqueda2"
+            placeholder="Ingresar dni...">
+            
         <br>
+        <div v-if="mostrarAdvertencia" class="alert alert-warning" role="alert">
+            Por favor, ingrese al menos 3 caracteres en uno de los filtros de búsqueda.
+        </div>
         <div class="card-deck m-0">
             <div class="row">
                 <div class="col" v-for="persona in personasFiltradas">
@@ -26,6 +34,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
         
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -35,6 +44,8 @@
             data() {
                 return {
                     criterioDeBusqueda: '',
+                    criterioDeBusqueda2: '',
+                    
                     //Aquí, en este array es donde tienen que agregar su información
                     personas: [
                         {
@@ -65,12 +76,19 @@
                 }
             },
             computed: {
+                mostrarAdvertencia() {
+                    return this.criterioDeBusqueda.length > 0 && this.criterioDeBusqueda.length < 3 ||
+                           this.criterioDeBusqueda2.length > 0 && this.criterioDeBusqueda2.length < 3;
+                },
                 personasFiltradas() {
                     return this.personas.filter((persona) => {
-                        let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
-                        return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                        let nombreCompleto = `${persona.nombre} ${persona.apellido}`
+                        let dni = persona.dni
+                        return (nombreCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())) &&
+                        (dni.includes(this.criterioDeBusqueda2.toLowerCase()))
                     });
-                }
+                },
+               
             },
             methods: {
                 getNombreCompleto(persona) {
